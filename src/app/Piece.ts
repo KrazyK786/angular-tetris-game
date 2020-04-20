@@ -83,4 +83,10 @@ export class Piece implements IPiece {
         ctx.fillRect(x, y, 1 , .05);
         ctx.fillRect(x, y, .95, .1);
     }
+    
+    move(p: IPiece): void{
+        this.x = p.x;
+        this.y = p.y;
+        this.shape = p.shape;
+    }
 }

@@ -30,22 +30,6 @@ export class BoardComponent implements OnInit {
   
   @HostListener('window: keydown', ['$event'])
   keyEvent(event: KeyboardEvent){
-    // console.log(event);
-    // if (event.code === KEY.RIGHT){
-    //   console.log('yess!!!!!!!!!!!');
-    // }
-    // if (event.code === 'ArrowLeft'){
-    //   console.log('ArrowLeft!!!!!!!!!!!');
-    // }
-    // if (event.code === 'ArrowUp'){
-    //   console.log('ArrowUp!!!!!!!!!!!');
-    // }
-    // if (event.code === 'ArrowDown'){
-    //   console.log('ArrowDown!!!!!!!!!!!');
-    // }
-    // if (event.code === 'Space'){
-    //   console.log('Space(bar)!!!!!!!!!!!');
-    // }
     
     //event.keyCode is deprecated
     if (this.moves[event.code]){
@@ -53,12 +37,17 @@ export class BoardComponent implements OnInit {
       event.preventDefault();
       // Get the next state of the piece
       let p = this.moves[event.code](this.piece);
+
       console.log('p: ');
       console.log(p);
       console.log('this');
       console.log(this.piece);
-      // Move the piece
-      this.piece.move(p);
+
+
+      if (this.gameService.valid(p)){
+        // Move the piece
+        this.piece.move(p);
+      }
       
       // Clear the old position before drawing
       this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);

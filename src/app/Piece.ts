@@ -31,8 +31,7 @@ export class Piece implements IPiece {
     }
     
     draw(): void{
-        // scale to BLOCK_SIZE so not tiny
-        this.ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
+        // removed scaling- was re-scaling on every draw..? :( (making the pieces bigger and bigger)
         this.shape.forEach((row, y) => {
             row.forEach((value, x) => {
                 if (value > 0){
@@ -87,6 +86,6 @@ export class Piece implements IPiece {
     move(p: IPiece): void{
         this.x = p.x;
         this.y = p.y;
-        this.shape = p.shape;
+        // this.shape = p.shape;
     }
 }

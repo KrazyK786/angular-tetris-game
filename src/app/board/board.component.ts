@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { COLS, BLOCK_SIZE, ROWS } from "../constants";
+import {Component, OnInit, ViewChild, ElementRef, HostListener} from '@angular/core';
+import {COLS, BLOCK_SIZE, ROWS, KEY} from "../constants";
 import { GameService } from "../services/game.service";
 import {IPiece, Piece} from "../Piece";
 
@@ -20,6 +20,53 @@ export class BoardComponent implements OnInit {
   level: number;
   board: number[][];
   piece: Piece;
+  moves = {
+    [KEY.LEFT]: (p: IPiece): IPiece => ({ ...p, x: p.x - 1 }),
+    [KEY.RIGHT]: (p: IPiece): IPiece => ({ ...p, x: p.x + 1 }),
+    [KEY.DOWN]: (p: IPiece): IPiece => ({ ...p, y: p.y + 1 }),
+    [KEY.SPACE]: (p: IPiece): IPiece => ({ ...p, y: p.y + 1 })
+    // [KEY.UP]: (p: IPiece): IPiece => this.service.rotate(p)
+  }
+  
+  @HostListener('window: keydown', ['$event'])
+  keyEvent(event: KeyboardEvent){
+    // console.log(event);
+    // if (event.code === KEY.RIGHT){
+    //   console.log('yess!!!!!!!!!!!');
+    // }
+    // if (event.code === 'ArrowLeft'){
+    //   console.log('ArrowLeft!!!!!!!!!!!');
+    // }
+    // if (event.code === 'ArrowUp'){
+    //   console.log('ArrowUp!!!!!!!!!!!');
+    // }
+    // if (event.code === 'ArrowDown'){
+    //   console.log('ArrowDown!!!!!!!!!!!');
+    // }
+    // if (event.code === 'Space'){
+    //   console.log('Space(bar)!!!!!!!!!!!');
+    // }
+    
+    //event.keyCode is deprecated
+    if (this.moves[event.code]){
+      // If the key exists in our moves stop the event from bubbling
+      event.preventDefault();
+      // Get the next state of the piece
+      let p = this.moves[event.code](this.piece);
+      console.log('p: ');
+      console.log(p);
+      console.log('this');
+      console.log(this.piece);
+      // Move the piece
+      this.piece.move(p);
+      
+      // Clear the old position before drawing
+      this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+      
+      // Draw the new position
+      this.piece.draw();
+    }
+  }
 
   constructor(
       private gameService: GameService
@@ -27,6 +74,9 @@ export class BoardComponent implements OnInit {
 
   ngOnInit(): void {
     this.initBoard();
+  
+    // Scale so we don't need to give size on every draw
+    this.ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
   }
   
   initBoard() {

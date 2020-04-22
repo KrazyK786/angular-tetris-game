@@ -38,13 +38,20 @@ export class BoardComponent implements OnInit {
       // Get the next state of the piece
       let p = this.moves[event.code](this.piece);
 
-      console.log('p: ');
-      console.log(p);
-      console.log('this');
-      console.log(this.piece);
+      // console.log('p: ');
+      // console.log(p);
+      // console.log('this');
+      // console.log(this.piece);
 
+      // Hard drop
+      if (event.code === KEY.SPACE){
+        while (this.gameService.valid(p)){
+          this.piece.move(p);
+          p = this.moves[event.code](this.piece);
+        }
+      }
 
-      if (this.gameService.valid(p)){
+      else if (this.gameService.valid(p)){
         // Move the piece
         this.piece.move(p);
       }

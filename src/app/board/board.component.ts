@@ -45,13 +45,13 @@ export class BoardComponent implements OnInit {
 
       // Hard drop
       if (event.code === KEY.SPACE){
-        while (this.gameService.valid(p)){
+        while (this.gameService.valid(p, this.board)){
           this.piece.move(p);
           p = this.moves[event.code](this.piece);
         }
       }
 
-      else if (this.gameService.valid(p)){
+      else if (this.gameService.valid(p, this.board)){
         // Move the piece
         this.piece.move(p);
       }

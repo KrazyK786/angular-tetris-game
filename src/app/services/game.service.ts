@@ -47,4 +47,22 @@ export class GameService {
   isEmpty(value: number): boolean {
     return value === 0;
   }
+  
+  rotate(piece: IPiece): IPiece {
+    // Clone piece using JSON
+    let p: IPiece = JSON.parse(JSON.stringify(piece));
+    
+    // Transpose matrix
+    for (let y = 0; y < p.shape.length; ++y){
+      for (let x = 0; x < y; ++x){
+        [p.shape[x][y], p.shape[y][x]] = [p.shape[y][x], p.shape[x][y]];
+      }
+    }
+    
+    // Reverse order of the columns
+    p.shape.forEach(row => row.reverse());
+    
+    // Return clone
+    return p;
+  }
 }

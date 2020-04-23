@@ -24,8 +24,8 @@ export class BoardComponent implements OnInit {
     [KEY.LEFT]: (p: IPiece): IPiece => ({ ...p, x: p.x - 1 }),
     [KEY.RIGHT]: (p: IPiece): IPiece => ({ ...p, x: p.x + 1 }),
     [KEY.DOWN]: (p: IPiece): IPiece => ({ ...p, y: p.y + 1 }),
-    [KEY.SPACE]: (p: IPiece): IPiece => ({ ...p, y: p.y + 1 })
-    // [KEY.UP]: (p: IPiece): IPiece => this.service.rotate(p)
+    [KEY.SPACE]: (p: IPiece): IPiece => ({ ...p, y: p.y + 1 }),
+    [KEY.UP]: (p: IPiece): IPiece => this.gameService.rotate(p)
   }
   
   @HostListener('window: keydown', ['$event'])
@@ -50,7 +50,13 @@ export class BoardComponent implements OnInit {
           p = this.moves[event.code](this.piece);
         }
       }
-
+      
+      // else if (event.code === KEY.UP){
+      //   if (this.gameService.valid(p, this.board)){
+      //     this.piece.move(p);
+      //   }
+      // }
+      
       else if (this.gameService.valid(p, this.board)){
         // Move the piece
         this.piece.move(p);

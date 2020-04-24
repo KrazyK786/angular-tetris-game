@@ -20,6 +20,8 @@ export class BoardComponent implements OnInit {
   level: number;
   board: number[][];
   piece: Piece;
+  requestId: number;
+  time: { start: number; elapsed: number; level: number };
   moves = {
     [KEY.LEFT]: (p: IPiece): IPiece => ({ ...p, x: p.x - 1 }),
     [KEY.RIGHT]: (p: IPiece): IPiece => ({ ...p, x: p.x + 1 }),
@@ -94,7 +96,24 @@ export class BoardComponent implements OnInit {
     this.board = this.gameService.getEmptyBoard();
     // console.table(this.board);
     this.piece = new Piece(this.ctx);
-    this.piece.draw();
+    // this.piece.draw();
+    
+    // set current time
+    // this.time.start = performance.now();
+    // console.log(this.time.start);
+    this.animate();
   }
   
+  animate(now = 0): void {
+    // this.time.elapsed = now - this.time.start;
+    // if (this.time.elapsed > this.time.level) {
+    //   this.time.start = now;
+      // if (!this.drop()) {
+      //   this.gameOver();
+      //   return;
+      // }
+    // }
+    this.piece.draw();
+    this.requestId = requestAnimationFrame(this.animate.bind(this));
+  }
 }

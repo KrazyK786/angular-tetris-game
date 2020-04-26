@@ -142,7 +142,7 @@ export class BoardComponent implements OnInit {
     if (this.time.elapsed > this.time.level) {
       // Reset start time
       this.time.start = now;
-      this.drop();
+      this. drop();
       // if (!this.drop()) {
       //   this.gameOver();
       //   return;
@@ -163,9 +163,11 @@ export class BoardComponent implements OnInit {
     
     
     else {
+      // add piece to gameboard to lock it in
       this.freeze();
       
-    //   this.clearLines();
+      //
+      this.clearLines();
     //   if (this.piece.y === 0){
     //     // Game over
     //     return false;
@@ -186,5 +188,31 @@ export class BoardComponent implements OnInit {
         }
       });
     });
+  }
+  
+  clearLines(): void {
+    let lines = 0;
+    this.board.forEach((row, y) => {
+  
+      // If every value is greater than 0
+      if (row.every(value => value !== 0)) {
+        lines++;
+  
+        // Remove the row
+        this.board.splice(y, 1);
+  
+        // Add a zero filled array at the top, causing the board to 'move down'
+        this.board.unshift(Array(COLS).fill(0));
+      }
+    });
+    // if (lines > 0) {
+    //   this.points += this.service.getLinesClearedPoints(lines, this.level);
+    //   this.lines += lines;
+    //   if (this.lines >= LINES_PER_LEVEL) {
+    //     this.level++;
+    //     this.lines -= LINES_PER_LEVEL;
+    //     this.time.level = LEVEL[this.level];
+    //   }
+    // }
   }
 }

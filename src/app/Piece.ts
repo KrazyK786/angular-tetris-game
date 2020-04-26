@@ -22,11 +22,11 @@ export class Piece implements IPiece {
     }
     
     spawn(): void{
-        // const typeId: number = this.randomizeTetrominoType(COLORS.length);
-        const colorId: number = this.randomizeTetrominoType(COLORS.length);
-        const shapeId: number = this.randomizeTetrominoType(SHAPES.length);
-        this.color = COLORS[colorId];
-        this.shape = SHAPES[shapeId]; //[[2, 0, 0], [2, 2, 2], [0, 0, 0]];
+        const typeId: number = this.randomizeTetrominoType(COLORS.length - 1);
+        // const colorId: number = this.randomizeTetrominoType(COLORS.length);
+        // const shapeId: number = this.randomizeTetrominoType(SHAPES.length);
+        this.color = COLORS[typeId];
+        this.shape = SHAPES[typeId]; //[[2, 0, 0], [2, 2, 2], [0, 0, 0]];
         
         // Position where the shape spawns
         this.x = 3;
@@ -93,7 +93,7 @@ export class Piece implements IPiece {
     }
     
     randomizeTetrominoType(noOfTypes: number): number{
-        // return Math.floor(Math.random() * noOfTypes + 1);
-        return Math.floor(Math.random() * Math.floor(noOfTypes));
+        return Math.floor(Math.random() * noOfTypes + 1);
+        // return Math.floor(Math.random() * Math.floor(noOfTypes));
     }
 }

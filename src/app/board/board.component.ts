@@ -1,5 +1,5 @@
 import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
-import {BLOCK_SIZE, COLORS, COLS, KEY, ROWS, Time} from "../constants";
+import {BLOCK_SIZE, COLORS, COLS, KEY, ROWS, POINTS, LEVEL} from "../constants";
 import {GameService} from "../services/game.service";
 import {IPiece, Piece} from "../Piece";
 
@@ -21,12 +21,14 @@ export class BoardComponent implements OnInit {
   board: number[][];
   piece: Piece;
   requestId: number;
-  time: Time;
-  // time: {
-  //   start: number;
-  //   elapsed: number;
-  //   level: number
-  // };
+  highScore: number;
+  paused: boolean;
+  // time: Time;
+  time: {
+    start: number;
+    elapsed: number;
+    level: number
+  };
   moves = {
     [KEY.LEFT]: (p: IPiece): IPiece => ({ ...p, x: p.x - 1 }),
     [KEY.RIGHT]: (p: IPiece): IPiece => ({ ...p, x: p.x + 1 }),
@@ -53,6 +55,7 @@ export class BoardComponent implements OnInit {
       // Hard drop
       if (event.code === KEY.SPACE){
         while (this.gameService.valid(p, this.board)){
+          this.points += POINTS.HARD_DROP; // Points for every drop
           this.piece.move(p);
           p = this.moves[event.code](this.piece);
         }
@@ -67,6 +70,9 @@ export class BoardComponent implements OnInit {
       else if (this.gameService.valid(p, this.board)){
         // Move the piece
         this.piece.move(p);
+        if (event.code === KEY.DOWN){
+          this.points += POINTS.SOFT_DROP; // Points if we move down
+        }
       }
       
       // Clear the old position before drawing
@@ -83,8 +89,13 @@ export class BoardComponent implements OnInit {
 
   ngOnInit(): void {
     this.initBoard();
-    this.time = new Time();
+    
+    this.resetGame();
+    this.highScore = 0;
+    
+    // this.time = new Time();
     this.time.level = 800;
+    
   
     // Scale so we don't need to give size on every draw
     this.ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
@@ -214,5 +225,19 @@ export class BoardComponent implements OnInit {
     //     this.time.level = LEVEL[this.level];
     //   }
     // }
+  }
+  
+  resetGame(): void {
+      this.points = 0;
+      this.lines = 0;
+      this.level = 0;
+      this.board = this.getEmptyBoard();
+      this.time = { start: 0, elapsed: 0, level: LEVEL[this.level] };
+      this.paused = false;
+      // this.addOutlines();
+    }
+  
+  getEmptyBoard(): number[][] {
+    return Array.from({ length: ROWS }, () => Array(COLS).fill(0));
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { COLS, ROWS } from "../constants";
+import {COLS, POINTS, ROWS} from "../constants";
 import { IPiece } from '../Piece';
 
 @Injectable({
@@ -64,5 +64,20 @@ export class GameService {
     
     // Return clone
     return p;
+  }
+  
+  getLinesClearedPoints(lines: number, level: number): number {
+    const lineClearPoints =
+        lines === 1
+            ? POINTS.SINGLE
+            : lines === 2
+            ? POINTS.DOUBLE
+            : lines === 3
+                ? POINTS.TRIPLE
+                : lines === 4
+                    ? POINTS.TETRIS
+                    : 0;
+  
+    return (level + 1) * lineClearPoints;
   }
 }

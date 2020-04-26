@@ -1,5 +1,5 @@
 import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
-import {BLOCK_SIZE, COLORS, COLS, KEY, ROWS, POINTS, LEVEL} from "../constants";
+import {BLOCK_SIZE, COLORS, COLS, KEY, ROWS, POINTS, LEVEL, LINES_PER_LEVEL} from "../constants";
 import {GameService} from "../services/game.service";
 import {IPiece, Piece} from "../Piece";
 
@@ -216,15 +216,16 @@ export class BoardComponent implements OnInit {
         this.board.unshift(Array(COLS).fill(0));
       }
     });
-    // if (lines > 0) {
-    //   this.points += this.service.getLinesClearedPoints(lines, this.level);
-    //   this.lines += lines;
-    //   if (this.lines >= LINES_PER_LEVEL) {
-    //     this.level++;
-    //     this.lines -= LINES_PER_LEVEL;
-    //     this.time.level = LEVEL[this.level];
-    //   }
-    // }
+    
+    if (lines > 0) {
+      this.points += this.gameService.getLinesClearedPoints(lines, this.level);
+      this.lines += lines;
+      if (this.lines >= LINES_PER_LEVEL) {
+        this.level++;
+        this.lines -= LINES_PER_LEVEL;
+        this.time.level = LEVEL[this.level];
+      }
+    }
   }
   
   resetGame(): void {

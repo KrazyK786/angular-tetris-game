@@ -23,6 +23,7 @@ export class BoardComponent implements OnInit {
   requestId: number;
   highScore: number;
   paused: boolean;
+  gameStarted: boolean;
   // time: Time;
   time: {
     start: number;
@@ -89,14 +90,10 @@ export class BoardComponent implements OnInit {
 
   ngOnInit(): void {
     this.initBoard();
-    
+    // this.initNext();
     this.resetGame();
     this.highScore = 0;
     
-    // this.time = new Time();
-    this.time.level = 800;
-    
-  
     // Scale so we don't need to give size on every draw
     this.ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
   }
@@ -131,17 +128,22 @@ export class BoardComponent implements OnInit {
   }
   
   play(){
-    
-    
-    this.board = this.gameService.getEmptyBoard();
-    // console.table(this.board);
+    this.gameStarted = true;
+    this.resetGame();
+    // this.next = new Piece(this.ctx);
     this.piece = new Piece(this.ctx);
-    // this.piece.draw();
+    // this.next.drawNext(this.ctxNext);
+    
+    // console.table(this.board);
     
     // set current time
-    // debugger;
     this.time.start = performance.now();
-    // console.log(this.time.start);
+    
+    // If we have an old game running a game, then cancel the old
+    if (this.requestId){
+      cancelAnimationFrame(this.requestId);
+    }
+    
     this.animate();
   }
   
@@ -218,27 +220,37 @@ export class BoardComponent implements OnInit {
     });
     
     if (lines > 0) {
+      // Calculate points form cleared lines and level
       this.points += this.gameService.getLinesClearedPoints(lines, this.level);
       this.lines += lines;
+      
+      // If we have reached the lines per level
       if (this.lines >= LINES_PER_LEVEL) {
+        
+        // Goto next level
         this.level++;
+        
+        // Remove lines so we start working for the next level
         this.lines -= LINES_PER_LEVEL;
+        
+        // Increase speed of game
         this.time.level = LEVEL[this.level];
       }
     }
   }
   
+  // Initialize game
   resetGame(): void {
       this.points = 0;
       this.lines = 0;
       this.level = 0;
-      this.board = this.getEmptyBoard();
+      this.board = this.gameService.getEmptyBoard();
       this.time = { start: 0, elapsed: 0, level: LEVEL[this.level] };
       this.paused = false;
       // this.addOutlines();
     }
   
-  getEmptyBoard(): number[][] {
-    return Array.from({ length: ROWS }, () => Array(COLS).fill(0));
-  }
+  // getEmptyBoard(): number[][] {
+  //   return Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+  // }
 }

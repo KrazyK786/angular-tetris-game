@@ -78,6 +78,7 @@ export class GameService {
                     ? POINTS.TETRIS
                     : 0;
   
+    // depending on the level, give more points for line clears (+1 since first level is 0)
     return (level + 1) * lineClearPoints;
   }
 }

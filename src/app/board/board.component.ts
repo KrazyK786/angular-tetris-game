@@ -1,5 +1,5 @@
 import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
-import {BLOCK_SIZE, COLS, KEY, ROWS, Time} from "../constants";
+import {BLOCK_SIZE, COLORS, COLS, KEY, ROWS, Time} from "../constants";
 import {GameService} from "../services/game.service";
 import {IPiece, Piece} from "../Piece";
 
@@ -99,9 +99,23 @@ export class BoardComponent implements OnInit {
     this.ctx.canvas.height = ROWS * BLOCK_SIZE;
   }
   
-  drawGame(): void{
+  drawBoard(): void{
+    this.board.forEach((row, y) => {
+      row.forEach((value, x) => {
+        if (value > 0){
+          this.ctx.fillStyle = COLORS[value];
+          this.ctx.fillRect(x, y, 1, 1);
+          // this.add3D(x, y, value);
+        }
+      });
+    });
+    // this.addOutlines();
+  }
+  
+  drawPiece(): void{
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.piece.draw();
+    this.drawBoard();
     
   }
   
@@ -134,7 +148,7 @@ export class BoardComponent implements OnInit {
       //   return;
       // }
     }
-    this.drawGame();
+    this.drawPiece();
     this.requestId = requestAnimationFrame(this.animate.bind(this));
   }
   
@@ -148,19 +162,29 @@ export class BoardComponent implements OnInit {
     }
     
     
-    // else {
-      // Clear the old position before drawing
-    //   this.freeze();
-
+    else {
+      this.freeze();
+      
     //   this.clearLines();
     //   if (this.piece.y === 0){
     //     // Game over
     //     return false;
     //   }
+      this.piece = new Piece(this.ctx);
     //   this.piece = this.next;
     //   this.next = new Piece(this.ctx);
     //   this.next.drawNext(this.ctxNext);
-    // }
+    }
     // return true;
+  }
+  
+  freeze(): void{
+    this.piece.shape.forEach((row, y) => {
+      row.forEach((value, x) => {
+        if (value > 0){
+          this.board[y + this.piece.y][x + this.piece.x] = value;
+        }
+      });
+    });
   }
 }

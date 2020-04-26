@@ -1,6 +1,6 @@
-import {Component, OnInit, ViewChild, ElementRef, HostListener} from '@angular/core';
-import {COLS, BLOCK_SIZE, ROWS, KEY} from "../constants";
-import { GameService } from "../services/game.service";
+import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
+import {BLOCK_SIZE, COLS, KEY, ROWS, Time} from "../constants";
+import {GameService} from "../services/game.service";
 import {IPiece, Piece} from "../Piece";
 
 @Component({
@@ -21,7 +21,12 @@ export class BoardComponent implements OnInit {
   board: number[][];
   piece: Piece;
   requestId: number;
-  time: { start: number; elapsed: number; level: number };
+  time: Time;
+  // time: {
+  //   start: number;
+  //   elapsed: number;
+  //   level: number
+  // };
   moves = {
     [KEY.LEFT]: (p: IPiece): IPiece => ({ ...p, x: p.x - 1 }),
     [KEY.RIGHT]: (p: IPiece): IPiece => ({ ...p, x: p.x + 1 }),
@@ -78,6 +83,8 @@ export class BoardComponent implements OnInit {
 
   ngOnInit(): void {
     this.initBoard();
+    this.time = new Time();
+    this.time.level = 800;
   
     // Scale so we don't need to give size on every draw
     this.ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
@@ -92,28 +99,68 @@ export class BoardComponent implements OnInit {
     this.ctx.canvas.height = ROWS * BLOCK_SIZE;
   }
   
+  drawGame(): void{
+    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    this.piece.draw();
+    
+  }
+  
   play(){
+    
+    
     this.board = this.gameService.getEmptyBoard();
     // console.table(this.board);
     this.piece = new Piece(this.ctx);
     // this.piece.draw();
     
     // set current time
-    // this.time.start = performance.now();
+    // debugger;
+    this.time.start = performance.now();
     // console.log(this.time.start);
     this.animate();
   }
   
   animate(now = 0): void {
-    // this.time.elapsed = now - this.time.start;
-    // if (this.time.elapsed > this.time.level) {
-    //   this.time.start = now;
+    // Update elapsed time
+    this.time.elapsed = now - this.time.start;
+    
+    // If elapsed time has passed time for current level
+    if (this.time.elapsed > this.time.level) {
+      // Reset start time
+      this.time.start = now;
+      this.drop();
       // if (!this.drop()) {
       //   this.gameOver();
       //   return;
       // }
-    // }
-    this.piece.draw();
+    }
+    this.drawGame();
     this.requestId = requestAnimationFrame(this.animate.bind(this));
+  }
+  
+  drop(): void {
+    // set p as if down key was pressed
+    let p = this.moves[KEY.DOWN](this.piece);
+  
+    if (this.gameService.valid(p, this.board)){
+      // Move the piece
+      this.piece.move(p);
+    }
+    
+    
+    // else {
+      // Clear the old position before drawing
+    //   this.freeze();
+
+    //   this.clearLines();
+    //   if (this.piece.y === 0){
+    //     // Game over
+    //     return false;
+    //   }
+    //   this.piece = this.next;
+    //   this.next = new Piece(this.ctx);
+    //   this.next.drawNext(this.ctxNext);
+    // }
+    // return true;
   }
 }

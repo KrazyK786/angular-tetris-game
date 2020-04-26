@@ -40,3 +40,13 @@ export class KEY {
     // static readonly RIGHT = 39;
     // static readonly DOWN = 40;
 }
+
+// time workaround?
+export class Time {
+    start = 0;
+    elapsed = 0;
+    level = 0;
+    // start: number;
+    // elapsed: number;
+    // level: number
+};

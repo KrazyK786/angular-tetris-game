@@ -40,7 +40,9 @@ export class BoardComponent implements OnInit {
   
   @HostListener('window: keydown', ['$event'])
   keyEvent(event: KeyboardEvent){
-    
+    if (event.code === KEY.ESC){
+      this.gameOver();
+    }
     //event.keyCode is deprecated
     if (this.moves[event.code]){
       // If the key exists in our moves stop the event from bubbling
@@ -156,16 +158,16 @@ export class BoardComponent implements OnInit {
       // Reset start time
       this.time.start = now;
       this. drop();
-      // if (!this.drop()) {
-      //   this.gameOver();
-      //   return;
-      // }
+      if (!this.drop()) {
+        this.gameOver();
+        return;
+      }
     }
     this.drawPiece();
     this.requestId = requestAnimationFrame(this.animate.bind(this));
   }
   
-  drop(): void {
+  drop(): boolean {
     // set p as if down key was pressed
     let p = this.moves[KEY.DOWN](this.piece);
   
@@ -181,16 +183,17 @@ export class BoardComponent implements OnInit {
       
       //
       this.clearLines();
-    //   if (this.piece.y === 0){
-    //     // Game over
-    //     return false;
-    //   }
+      // check if the piece is at the top of the board
+      if (this.piece.y === 0){
+        // Game over
+        return false;
+      }
       this.piece = new Piece(this.ctx);
     //   this.piece = this.next;
     //   this.next = new Piece(this.ctx);
     //   this.next.drawNext(this.ctxNext);
     }
-    // return true;
+    return true;
   }
   
   freeze(): void{
@@ -253,4 +256,14 @@ export class BoardComponent implements OnInit {
   // getEmptyBoard(): number[][] {
   //   return Array.from({ length: ROWS }, () => Array(COLS).fill(0));
   // }
+  gameOver(): void {
+    this.gameStarted = false;
+    cancelAnimationFrame(this.requestId);
+    this.highScore = this.points > this.highScore ? this.points : this.highScore;
+    this.ctx.fillStyle = 'black';
+    this.ctx.fillRect(1, 3, 8, 1.2);
+    this.ctx.font = '1px Arial';
+    this.ctx.fillStyle = 'red';
+    this.ctx.fillText('GAME OVER', 1.8, 4);
+  }
 }

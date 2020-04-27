@@ -14,12 +14,17 @@ export class BoardComponent implements OnInit {
   @ViewChild('board', { static: true })
   canvas: ElementRef<HTMLCanvasElement>;
   
+  @ViewChild('next', { static: true })
+  canvasNext: ElementRef<HTMLCanvasElement>;
+  
   ctx: CanvasRenderingContext2D;
+  ctxNext: CanvasRenderingContext2D;
   points: number;
   lines: number;
   level: number;
   board: number[][];
   piece: Piece;
+  next: Piece;
   requestId: number;
   highScore: number;
   paused: boolean;
@@ -92,7 +97,7 @@ export class BoardComponent implements OnInit {
 
   ngOnInit(): void {
     this.initBoard();
-    // this.initNext();
+    this.initNext();
     this.resetGame();
     this.highScore = 0;
     
@@ -107,6 +112,17 @@ export class BoardComponent implements OnInit {
     // Calculate size of canvas from constants.
     this.ctx.canvas.width = COLS * BLOCK_SIZE;
     this.ctx.canvas.height = ROWS * BLOCK_SIZE;
+  }
+  
+  initNext(): void{
+    this.ctxNext = this.canvasNext.nativeElement.getContext('2d');
+  
+    // Calculate size of canvas from constants.
+    // The + 2 is to allow for space to add the drop shadow to
+    this.ctxNext.canvas.width = 4 * BLOCK_SIZE + 2;
+    this.ctxNext.canvas.height = 4 * BLOCK_SIZE;
+    
+    this.ctxNext.scale(BLOCK_SIZE, BLOCK_SIZE);
   }
   
   drawBoard(): void{
@@ -132,9 +148,9 @@ export class BoardComponent implements OnInit {
   play(){
     this.gameStarted = true;
     this.resetGame();
-    // this.next = new Piece(this.ctx);
+    this.next = new Piece(this.ctx);
     this.piece = new Piece(this.ctx);
-    // this.next.drawNext(this.ctxNext);
+    this.next.drawNext(this.ctxNext);
     
     // console.table(this.board);
     
@@ -188,10 +204,11 @@ export class BoardComponent implements OnInit {
         // Game over
         return false;
       }
-      this.piece = new Piece(this.ctx);
-    //   this.piece = this.next;
-    //   this.next = new Piece(this.ctx);
-    //   this.next.drawNext(this.ctxNext);
+      
+      // this.piece = new Piece(this.ctx);
+      this.piece = this.next;
+      this.next = new Piece(this.ctx);
+      this.next.drawNext(this.ctxNext);
     }
     return true;
   }

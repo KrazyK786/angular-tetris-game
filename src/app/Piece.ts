@@ -96,4 +96,28 @@ export class Piece implements IPiece {
         return Math.floor(Math.random() * noOfTypes + 1);
         // return Math.floor(Math.random() * Math.floor(noOfTypes));
     }
+    
+    drawNext(ctxNext: CanvasRenderingContext2D): void {
+        ctxNext.clearRect(0, 0, ctxNext.canvas.width, ctxNext.canvas.height);
+        // this.shape.forEach((row, y) => {
+        //     row.forEach((value, x) => {
+        //         if (value > 0) {
+        //             this.addNextShadow(ctxNext, x, y);
+        //         }
+        //     });
+        // });
+    
+        ctxNext.fillStyle = this.color;
+        this.shape.forEach((row, y) => {
+            row.forEach((value, x) => {
+                if (value > 0) {
+                    ctxNext.fillStyle = this.color;
+                    const currentX = x + .025;
+                    const currentY = y + .025;
+                    ctxNext.fillRect(currentX, currentY, 1-.025, 1 -.025);
+                    this.add3D(ctxNext, currentX, currentY);
+                }
+            });
+        });
+    }
 }
